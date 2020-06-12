@@ -1,5 +1,7 @@
 module github.com/siddontang/go-mysql
 
+go 1.14
+
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/go-sql-driver/mysql v1.4.1
@@ -15,3 +17,5 @@ require (
 	github.com/sirupsen/logrus v1.4.1 // indirect
 	golang.org/x/text v0.3.2 // indirect
 )
+
+replace github.com/coreos/bbolt => go.etcd.io/bbolt v1.3.4

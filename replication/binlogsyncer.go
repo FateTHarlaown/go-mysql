@@ -44,6 +44,9 @@ type BinlogSyncerConfig struct {
 	// Charset is for MySQL client character set
 	Charset string
 
+	// the uuid of slave
+	Uuid string
+
 	// SemiSyncEnabled enables semi-sync or not.
 	SemiSyncEnabled bool
 
@@ -269,6 +272,11 @@ func (b *BinlogSyncer) registerSlave() error {
 			// }
 
 		}
+	}
+
+	slaveuuid := b.uuid()
+	if _, err := b.c.Execute(fmt.Sprintf("SET @slave_uuid='%s'", slaveuuid)); err != nil {
+		return errors.Errorf("failed to set SET @slave_uuid='%s': %v", slaveuuid, err)
 	}
 
 	if b.cfg.Flavor == MariaDBFlavor {
@@ -499,6 +507,13 @@ func (b *BinlogSyncer) localHostname() string {
 		return h
 	}
 	return b.cfg.Localhost
+}
+
+func (b *BinlogSyncer) uuid() string {
+	if len(b.cfg.Uuid) == 0 {
+		return uuid.NewV1().String()
+	}
+	return b.cfg.Uuid
 }
 
 func (b *BinlogSyncer) writeRegisterSlaveCommand() error {
